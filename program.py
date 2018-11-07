@@ -34,13 +34,15 @@ np.random.seed(0)
 X, labels = sklearn.datasets.make_moons(200, noise=0.20)
 y = labels.reshape(-1, 1)
 
-# topology of our Neural Network: 2-5-1
+# topology of our Neural Network: 2-5-5-1
 # 2: input layer
 # 5: layer 1
-# 1: layer 2
+# 5: layer 2
+# 1: layer 3
 input_size = 2
 layer1 = 5
-layer2 = 1
+layer2 = 5
+layer3 = 1
 
 # initialize parameters
 W1 = 2 * np.random.random((input_size, layer1)) - 1  # weights matrix of the first layer
@@ -48,24 +50,36 @@ b1 = 2 * np.random.random((1, layer1)) - 1  # bias vector of the first layer
 W2 = 2 * np.random.random((layer1, layer2)) - 1  # weights matrix of the second layer
 b2 = 2 * np.random.random((1, layer2)) - 1  # bias vector of the second layer
 
+# variables for the new NN
+w01 = 2 * np.random.random((input_size, layer1)) - 1
+X01 = X
+delta01 = np.zeros((input_size, layer1))
+w12 = 2 * np.random.random((layer1, layer2)) - 1
+X12 = np.zeros((len(X), layer1))
+delta12 = np.zeros((layer1, layer2))
+w23 = 2 * np.random.random((layer2, layer3)) - 1
+X23 = np.zeros((len(X), layer2))
+delta23 = np.zeros((layer2, layer3))
+deltaOut = np.zeros((layer3, 1))
+
 
 def tanh_back_propogation(a2):
-    '''Derivative of tanh
-            Returns:
-                dx: 1/cosh(x)**2
-                []: no gradient on tanh operation
-            '''
     return 1 / (np.cosh(a2) ** 2)
 
 
 # lr: learning rate for parameters updating
 lr = 0.1
+print('enter the name of the first layer activation function')
+function = str(input())
 for j in range(20000):
     # FEED FORWARD PROPAGATION
     z1 = np.dot(X, W1) + b1  # first layer perceptrons
-    a1 = sigmoid(z1)  # first layer activation
-    a1_tanh = tanh(z1)  # first layer activation with tanh function
-    a1_relu = relu(z1)  # first layer activation with relu function
+    if (function == 'sigmoid'):
+        a1 = sigmoid(z1)  # first layer activation
+    elif (function == 'tanh'):
+        a1 = tanh(z1)  # first layer activation with tanh function
+    elif (function == 'relu'):
+        a1 = relu(z1)  # first layer activation with relu function
     z2 = np.dot(a1, W2) + b2  # second layer perceptrons
     a2 = sigmoid(z2)  # second layer activation
 
